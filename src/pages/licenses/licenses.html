@@ -1,7 +1,18 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar no-border-bottom color="primary">
     <ion-title>Licencias</ion-title>
   </ion-navbar>
+
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="licenses" color="primary">
+      <ion-segment-button value="available">
+        Libres
+      </ion-segment-button>
+      <ion-segment-button value="unavailable">
+        Ocupadas
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -11,25 +22,22 @@
     </button>
   </ion-fab>
 
-  <ion-list>
-    <!-- <ion-item>
-      <ion-label stacked>Nombre de usuario</ion-label>
-      <ion-input type="text" value=""></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Contraseña</ion-label>
-      <ion-input type="password"></ion-input>
-    </ion-item> -->
-    <button ion-item>
-      MQJHC-R7K2T-VVV3H-62R88-Y64RF
-    </button>
-    <button ion-item>
-      MQJHC-R7K2T-VVV3H-62R88-Y64RF
-    </button>
-    <button ion-item>
-      MQJHC-R7K2T-VVV3H-62R88-Y64RF
-    </button>
-  </ion-list>
-
-  <!-- <button ion-button block>Acceso</button> -->
+  <div [ngSwitch]="licenses">
+    <ion-list *ngSwitchCase="'available'">
+      <button ion-item *ngFor="let item of available">
+        {{ item.license }}
+        <ion-badge item-end>
+          {{ item.product }}
+        </ion-badge>
+      </button>
+    </ion-list>
+    <ion-list *ngSwitchCase="'unavailable'">
+      <button ion-item *ngFor="let item of unavailable">
+        {{ item.license }}
+        <ion-badge item-end>
+          {{ item.product }}
+        </ion-badge>
+      </button>
+    </ion-list>
+  </div>
 </ion-content>
