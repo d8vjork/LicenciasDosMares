@@ -21,8 +21,8 @@
   <ion-list>
     <button ion-item *ngFor="let item of items">
       <ion-icon name="desktop" item-start></ion-icon>
-      <h2>{{ 'PC' + item }}</h2>
-      Aula 004
+      <h2>{{ item.name }}</h2>
+      {{ item.model }}
     </button>
   </ion-list>
 </ion-content>
