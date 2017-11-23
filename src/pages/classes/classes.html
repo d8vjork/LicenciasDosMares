@@ -4,11 +4,11 @@
       Aulas
     </ion-title>
 
-    <ion-buttons start>
-      <button ion-button icon-only (click)="showLogin()">
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" (click)="showLogin()">
         <ion-icon name="contact"></ion-icon>
       </button>
-      <button ion-button icon-only (click)="showSearch = !showSearch">
+      <button ion-button icon-only color="royal" (click)="showSearch = !showSearch">
         <ion-icon name="search"></ion-icon>
       </button>
     </ion-buttons>
@@ -19,15 +19,15 @@
   <ion-searchbar [hidden]="showSearch === false" (ionInput)="getItems($event)"></ion-searchbar>
 
   <ion-fab bottom right>
-    <button ion-fab mini>
+    <button ion-fab mini (click)="addClass()">
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
 
   <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="goDesktopPage()">
-      <h2>{{ item.title }}</h2>
-      <h3>{{ item.desktops.length }} equipos</h3>
+    <button ion-item *ngFor="let class of classes | async" (click)="pushDesktopPage(class.id, class.name)">
+      <h2>{{ class.name }}</h2>
+      <h3>{{ class.desktops || 0 }} equipos</h3>
     </button>
   </ion-list>
 </ion-content>

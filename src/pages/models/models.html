@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Modelos</ion-title>
   </ion-navbar>
 </ion-header>
@@ -12,9 +12,9 @@
   </ion-fab>
 
   <ion-list>
-    <button ion-item>
-      <h2>MSI negro 2013</h2>
-      dsss
+    <button ion-item *ngFor="let model of models | async">
+      <h2>{{ model.description }}</h2>
+      {{ model.cpu }}
     </button>
   </ion-list>
 </ion-content>

@@ -4,17 +4,12 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular'
 import { MyApp } from './app.component'
 
 // Import the AF2 Module
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireModule } from 'angularfire2'
+import { AngularFirestoreModule } from 'angularfire2/firestore'
+import { AngularFireAuthModule } from 'angularfire2/auth'
 
 // AF2 Settings
-export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  storageBucket: "",
-  messagingSenderId: ""
-};
+import firebaseConfig from './config.development'
 
 import { ModelsPage } from '../pages/models/models'
 import { DesktopsPage } from '../pages/desktops/desktops'
@@ -22,6 +17,7 @@ import { LicensesPage } from '../pages/licenses/licenses'
 import { ClassesPage } from '../pages/classes/classes'
 import { TabsPage } from '../pages/tabs/tabs'
 import { LoginPage } from '../pages/login/login'
+import { CreateDesktopPage } from '../pages/create-desktop/create-desktop'
 
 import { StatusBar } from '@ionic-native/status-bar'
 import { SplashScreen } from '@ionic-native/splash-screen'
@@ -34,13 +30,15 @@ import { SplashScreen } from '@ionic-native/splash-screen'
     LicensesPage,
     ClassesPage,
     LoginPage,
+    CreateDesktopPage,
     TabsPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireDatabaseModule
+    AngularFirestoreModule.enablePersistence(),
+    AngularFireAuthModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -50,6 +48,7 @@ import { SplashScreen } from '@ionic-native/splash-screen'
     LicensesPage,
     ClassesPage,
     LoginPage,
+    CreateDesktopPage,
     TabsPage
   ],
   providers: [

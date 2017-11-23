@@ -1,0 +1,39 @@
+<!--
+  Generated template for the CreateDesktopPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>
+      {{ (desktop.name == '') ? 'Añadir equipo' : 'Modificar ' + desktop.name }}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label stacked>Nº Equipo</ion-label>
+      <ion-input type="text" value="{{ desktop.name || '' }}"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Modelo</ion-label>
+      <ion-select *ngFor="let model of models | async" [(ngModel)]="modelsMod">
+        <ion-option value="{{ model.id }}">{{ model.description }}</ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Licencia</ion-label>
+      <ion-input type="text" value=""></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <button [hidden]="desktop.name == ''" ion-button block>
+    Modificar
+  </button>
+  <button [hidden]="desktop.name != ''" ion-button block>
+    Crear
+  </button>
+</ion-content>

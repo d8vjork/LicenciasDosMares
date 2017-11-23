@@ -1,8 +1,15 @@
 import { Component } from '@angular/core'
-import { NavController } from 'ionic-angular'
+import { NavController, AlertController, ActionSheetController } from 'ionic-angular'
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
+import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/operator/map'
 
 import { LoginPage } from '../login/login'
 import { DesktopsPage } from '../desktops/desktops'
+
+export interface Desktop { name: string }
+export interface Class { name: string, desktops: Desktop }
+export interface ClassId extends Class { id: string }
 
 @Component({
   selector: 'page-classes',
@@ -11,78 +18,81 @@ import { DesktopsPage } from '../desktops/desktops'
 export class ClassesPage {
   SearchQuery: string = ''
   showSearch: boolean = false
-  items: Array<Object>
+  private classCollection: AngularFirestoreCollection<Class>
+  classes: Observable<ClassId[]>
 
-  constructor(public navCtrl: NavController) {
-    this.initializeItems()
-  }
-
-  initializeItems() {
-    this.items = [
-      {
-        title: 'Aula004',
-        desktops: [
-          {
-            number: 115,
-            model: 'MSI Negro 2014'
-          },
-          {
-            number: 114,
-            model: 'MSI Negro 2017'
-          },
-          {
-            number: 117,
-            model: 'MSI Negro 2017'
-          }
-        ]
-      },
-      {
-        title: 'Aula007',
-        desktops: [
-          {
-            number: 210,
-            model: 'HP Viejo APD'
-          },
-          {
-            number: 211,
-            model: 'HP Viejo APD'
-          },
-          {
-            number: 212,
-            model: 'HP Viejo APD'
-          },
-          {
-            number: 213,
-            model: 'HP Viejo APD'
-          },
-          {
-            number: 214,
-            model: 'HP Viejo APD'
-          }
-        ]
-      }
-    ]
-  }
-
-  getItems(ev: any) {
-    // Reset items back to all of the items
-    this.initializeItems()
-
-    // set val to the value of the searchbar
-    let val = ev.target.value
-
-    // if the value is an empty string don't filter the items
-    if (val && val.trim() != '') {
-      this.items = this.items.filter((v) => {
-        return (v.title.toLowerCase().indexOf(val.toLowerCase()) > -1)
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController,
+    afs: AngularFirestore, public actionSheetCtrl: ActionSheetController) {
+    this.classCollection = afs.collection<Class>('classes')
+    this.classes = this.classCollection.snapshotChanges().map(actions => {
+      return actions.map(a => {
+        const data = a.payload.doc.data() as Class
+        const id = a.payload.doc.id
+        return { id, ...data }
       })
-    }
+    })
   }
 
-  goDesktopPage() {
-    //push another page onto the history stack
-    //causing the nav controller to animate the new page in
-    this.navCtrl.push(DesktopsPage)
+  showOptions(classId, className) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: '¿Qué desea hacer?',
+      buttons: [
+        {
+          text: 'Editar',
+          handler: () => {
+            this.classCollection.doc(classId).update({
+              name: className
+            })
+          }
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.classCollection.doc(classId).delete()
+          }
+        }
+      ]
+    })
+
+    actionSheet.present()
+  }
+
+  addClass () {
+    let prompt = this.alertCtrl.create({
+      title: 'Añadir aula',
+      message: "Introduzca el aula a añadir",
+      inputs: [
+        {
+          name: 'nombre',
+          placeholder: 'Aula001'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: data => {}
+        },
+        {
+          text: 'Añadir',
+          handler: data => {
+            this.classCollection.add({
+              name: data.nombre,
+              desktops: null
+            })
+          }
+        }
+      ]
+    })
+
+    prompt.present()
+  }
+
+  pushDesktopPage(classId: string, className: string) {
+    this.navCtrl.push(DesktopsPage, {
+      id: classId,
+      title: className
+    })
   }
 
   showLogin() {
