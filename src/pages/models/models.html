@@ -6,15 +6,15 @@
 
 <ion-content>
   <ion-fab bottom right>
-    <button ion-fab mini>
+    <button ion-fab mini (click)="addModel()">
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
 
   <ion-list>
-    <button ion-item *ngFor="let model of models | async">
+    <button ion-item *ngFor="let model of models | async" (click)="updateModel(model.id)">
       <h2>{{ model.description }}</h2>
-      {{ model.cpu }}
+      <h3>{{ model.cpu }}</h3>
     </button>
   </ion-list>
 </ion-content>

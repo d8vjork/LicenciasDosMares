@@ -4,7 +4,6 @@ import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/fires
 import { Observable } from 'rxjs/Observable'
 import 'rxjs/add/operator/map'
 
-import { LoginPage } from '../login/login'
 import { DesktopsPage } from '../desktops/desktops'
 
 export interface Desktop { name: string }
@@ -28,12 +27,17 @@ export class ClassesPage {
       return actions.map(a => {
         const data = a.payload.doc.data() as Class
         const id = a.payload.doc.id
+
+        // this.classCollection.doc<Class>('classes/'+id).collection<Desktop>('desktops').valueChanges()
+
         return { id, ...data }
       })
     })
+
+    // console.log(this.classCollection.doc<Desktop>('desktops'))
   }
 
-  showOptions(classId, className) {
+  showOptions (classId: string, className: string) {
     let actionSheet = this.actionSheetCtrl.create({
       title: '¿Qué desea hacer?',
       buttons: [
@@ -64,20 +68,20 @@ export class ClassesPage {
       message: "Introduzca el aula a añadir",
       inputs: [
         {
-          name: 'nombre',
-          placeholder: 'Aula001'
+          name: 'name',
+          placeholder: 'Nombre del aula'
         }
       ],
       buttons: [
         {
           text: 'Cancelar',
-          handler: data => {}
+          handler: (data) => {}
         },
         {
           text: 'Añadir',
-          handler: data => {
+          handler: (data) => {
             this.classCollection.add({
-              name: data.nombre,
+              name: data.name,
               desktops: null
             })
           }
@@ -88,15 +92,11 @@ export class ClassesPage {
     prompt.present()
   }
 
-  pushDesktopPage(classId: string, className: string) {
+  pushDesktopPage (classId: string, className: string) {
     this.navCtrl.push(DesktopsPage, {
       id: classId,
       title: className
     })
-  }
-
-  showLogin() {
-    this.navCtrl.push(LoginPage)
   }
 
 }

@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
 import { Observable } from 'rxjs/Observable'
 
-export interface Model { description: string }
+export interface Model { description: string; }
 export interface ModelId extends Model { id: string }
 
 @IonicPage()

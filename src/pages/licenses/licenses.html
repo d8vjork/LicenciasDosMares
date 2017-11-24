@@ -13,7 +13,7 @@
   </ion-navbar>
 
   <ion-toolbar color="primary">
-    <ion-segment [(ngModel)]="licenses" color="light">
+    <ion-segment color="light" [(ngModel)]="availableModel" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="available">
         Libres
       </ion-segment-button>
@@ -34,11 +34,12 @@
   </ion-fab>
 
   <ion-list>
-    <button ion-item *ngFor="let license of licenses | async" (click)="showOptions(license.id, license.serial)">
+    <button ion-item *ngFor="let license of licenses | async" (click)="showOptions(license)">
       {{ license.serial }}
-      <ion-badge item-end>
-        {{ license.product.slug || '¿?' }}
+      <ion-badge item-end color="secondary">
+        {{ license.product || '¿?' }}
       </ion-badge>
     </button>
+    <ion-item *ngIf="licenses.length === 0">No se han encontrado licencias.</ion-item>
   </ion-list>
 </ion-content>
