@@ -1,11 +1,12 @@
 import { Component } from '@angular/core'
-import { NavController, AlertController, ActionSheetController } from 'ionic-angular'
+import { NavController, AlertController, ActionSheetController, LoadingController } from 'ionic-angular'
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
 import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/combineLatest';
+import { Loading } from 'ionic-angular/components/loading/loading';
 
 export interface License { available: boolean; serial: string; product: Object }
 export interface LicenseId extends License { id: string; }
@@ -15,14 +16,18 @@ export interface LicenseId extends License { id: string; }
   templateUrl: 'licenses.html'
 })
 export class LicensesPage {
+  loading: Loading
   availableModel: string = 'available'
   showSearch: boolean = false
   availableFilter$: BehaviorSubject<boolean|null>
   private licenseCollection: AngularFirestoreCollection<License>
   licenses: Observable<LicenseId[]>
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController,
-    public afs: AngularFirestore, public actionSheetCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public afs: AngularFirestore,
+    public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
+    this.loading = loadingCtrl.create({
+      content: "Cargando..."
+    })
     this.availableFilter$ = new BehaviorSubject(true)
     this.licenseCollection = afs.collection<License>('licenses')
 
@@ -39,14 +44,20 @@ export class LicensesPage {
         })
       })
     )
+
+    this.loading.dismiss()
   }
 
   segmentChanged (event) {
+    this.loading.present()
+
     if (event.value === 'available') {
       this.filterByAvailable(true)
     } else if (event.value === 'unavailable') {
       this.filterByAvailable(false)
     }
+
+    this.loading.dismiss()
   }
 
   filterByAvailable (available: boolean|null) {

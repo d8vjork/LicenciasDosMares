@@ -20,8 +20,8 @@ export class ClassesPage {
   private classCollection: AngularFirestoreCollection<Class>
   classes: Observable<ClassId[]>
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController,
-    afs: AngularFirestore, public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, afs: AngularFirestore,
+    public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
     let loading = this.loadingCtrl.create({
       content: "Cargando..."
     })
@@ -35,12 +35,11 @@ export class ClassesPage {
 
         // Get all desktops of the class
         data.desktops = this.classCollection.doc<Class>(id).collection<Desktop>('desktops').valueChanges()
-        loading.dismiss()
-
         return { id, ...data }
       })
     })
 
+    loading.dismiss()
     // console.log(this.classCollection.doc<Desktop>('desktops'))
   }
 
@@ -107,3 +106,5 @@ export class ClassesPage {
   }
 
 }
+
+
