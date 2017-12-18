@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { NavController, AlertController, ActionSheetController } from 'ionic-angular'
+import { NavController, AlertController, ActionSheetController, LoadingController } from 'ionic-angular'
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
 import { Observable } from 'rxjs/Observable'
 import 'rxjs/add/operator/map'
@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map'
 import { DesktopsPage } from '../desktops/desktops'
 
 export interface Desktop { name: string }
-export interface Class { name: string, desktops: Desktop }
+export interface Class { name: string, desktops: Observable<Desktop[]> }
 export interface ClassId extends Class { id: string }
 
 @Component({
@@ -21,14 +21,21 @@ export class ClassesPage {
   classes: Observable<ClassId[]>
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController,
-    afs: AngularFirestore, public actionSheetCtrl: ActionSheetController) {
+    afs: AngularFirestore, public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
+    let loading = this.loadingCtrl.create({
+      content: "Cargando..."
+    })
+    loading.present()
+
     this.classCollection = afs.collection<Class>('classes')
     this.classes = this.classCollection.snapshotChanges().map(actions => {
       return actions.map(a => {
         const data = a.payload.doc.data() as Class
         const id = a.payload.doc.id
 
-        // this.classCollection.doc<Class>('classes/'+id).collection<Desktop>('desktops').valueChanges()
+        // Get all desktops of the class
+        data.desktops = this.classCollection.doc<Class>(id).collection<Desktop>('desktops').valueChanges()
+        loading.dismiss()
 
         return { id, ...data }
       })

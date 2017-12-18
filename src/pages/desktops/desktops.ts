@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable'
 
 import { CreateDesktopPage } from '../create-desktop/create-desktop'
 
-export interface Desktop { name: string }
+export interface Model { cpu: string; description: string; hdd: string; ram: string; }
+export interface Desktop { name: string; model: Observable<Model> }
 export interface Class { name: string; desktops: Desktop[] }
 
 @Component({
