@@ -68,7 +68,7 @@ export class ClassesPage {
     actionSheet.present()
   }
 
-  addClass () {
+  addClass() {
     let prompt = this.alertCtrl.create({
       title: 'Añadir aula',
       message: "Introduzca el aula a añadir",

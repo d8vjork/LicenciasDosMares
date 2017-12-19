@@ -4,8 +4,10 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular'
 import { MyApp } from './app.component'
 
 // Import the AF2 Module
+import { HttpModule } from '@angular/http'
 import { AngularFireModule } from 'angularfire2'
-import { AngularFirestoreModule } from 'angularfire2/firestore'
+import { AngularFireDatabaseModule } from 'angularfire2/database'
+import { FirebaseProvider } from './../providers/firebase/firebase'
 
 // AF2 Settings
 import firebaseConfig from './config.development'
@@ -40,9 +42,11 @@ import { Camera } from '@ionic-native/camera'
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp),
+    HttpModule,
+    AngularFireDatabaseModule,
+    // AngularFirestoreModule.enablePersistence()
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFirestoreModule.enablePersistence()
+    IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -63,6 +67,7 @@ import { Camera } from '@ionic-native/camera'
     Transfer,
     Camera,
     FilePath,
+    FirebaseProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

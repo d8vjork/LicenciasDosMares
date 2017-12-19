@@ -1,15 +1,11 @@
 import { Component } from '@angular/core'
 import { NavController, AlertController, ActionSheetController, LoadingController } from 'ionic-angular'
-import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
-import { Observable } from 'rxjs/Observable'
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/operator/map'
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/observable/combineLatest';
-import { LoginBoxComponent } from '../../components/login-box/login-box';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject'
+import { LoginBoxComponent } from '../../components/login-box/login-box'
+import { FirebaseProvider } from '../../providers/firebase/firebase';
+import { Observable } from 'rxjs/Observable';
 
 export interface License { available: boolean; serial: string; product: Object }
-export interface LicenseId extends License { id: string; }
 
 @Component({
   selector: 'page-licenses',
@@ -20,33 +16,15 @@ export class LicensesPage {
   availableModel: string = 'available'
   showSearch: boolean = false
   availableFilter$: BehaviorSubject<boolean|null>
-  private licenseCollection: AngularFirestoreCollection<License>
-  licenses: Observable<LicenseId[]>
+  licenses: Observable<any[]>
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public afs: AngularFirestore,
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public firebaseProvider: FirebaseProvider,
     public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
-    this.availableFilter$ = new BehaviorSubject(true)
-
-    const loading = this.loadingCtrl.create({
+    let loading = this.loadingCtrl.create({
       content: "Cargando..."
     })
     loading.present()
-    
-    this.licenseCollection = this.afs.collection<License>('licenses')
-    this.licenses = Observable.combineLatest(
-      this.availableFilter$
-    ).switchMap(([available]) =>
-      this.afs.collection<License>('licenses', ref =>
-        ref.where('available', '==', available)
-      ).snapshotChanges().map(actions => {
-        return actions.map(a => {
-          const data = a.payload.doc.data() as License
-          const id = a.payload.doc.id
-          return { id, ...data }
-        })
-      })
-    )
-
+    this.licenses = this.firebaseProvider.getLicenses()
     loading.dismiss()
   }
 
@@ -76,7 +54,7 @@ export class LicensesPage {
           text: 'Eliminar',
           role: 'destructive',
           handler: () => {
-            this.licenseCollection.doc(license.id).delete()
+            // this.licenseCollection.doc(license.id).delete()
           }
         }
       ]
@@ -111,11 +89,11 @@ export class LicensesPage {
         {
           text: 'Añadir',
           handler: (data) => {
-            this.licenseCollection.add({
-              available: (this.availableModel === 'available') ? true : false,
-              serial: data.serial,
-              product: data.sistema
-            })
+            // this.licenseCollection.add({
+            //   available: (this.availableModel === 'available') ? true : false,
+            //   serial: data.serial,
+            //   product: data.sistema
+            // })
           }
         }
       ]
@@ -148,10 +126,10 @@ export class LicensesPage {
         {
           text: 'Guardar',
           handler: (data) => {
-            this.licenseCollection.doc(license.id).update({
-              serial: data.serial,
-              product: data.product
-            })
+            // this.licenseCollection.doc(license.id).update({
+            //   serial: data.serial,
+            //   product: data.product
+            // })
           }
         }
       ]
