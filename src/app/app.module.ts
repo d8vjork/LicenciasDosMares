@@ -17,6 +17,7 @@ import { ClassesPage } from '../pages/classes/classes'
 import { TabsPage } from '../pages/tabs/tabs'
 import { CreateDesktopPage } from '../pages/create-desktop/create-desktop'
 import { CreateModelPage } from '../pages/create-model/create-model'
+import { LoginBoxComponent } from '../components/login-box/login-box'
 
 import { StatusBar } from '@ionic-native/status-bar'
 import { SplashScreen } from '@ionic-native/splash-screen'
@@ -34,6 +35,7 @@ import { Camera } from '@ionic-native/camera'
     ClassesPage,
     CreateDesktopPage,
     CreateModelPage,
+    LoginBoxComponent,
     TabsPage
   ],
   imports: [
@@ -51,6 +53,7 @@ import { Camera } from '@ionic-native/camera'
     ClassesPage,
     CreateDesktopPage,
     CreateModelPage,
+    LoginBoxComponent,
     TabsPage
   ],
   providers: [

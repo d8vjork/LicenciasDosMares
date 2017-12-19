@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { NavController, AlertController, ActionSheetController } from 'ionic-angular'
+import { NavController, AlertController, ActionSheetController, LoadingController } from 'ionic-angular'
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore'
 import { Observable } from 'rxjs/Observable'
 
@@ -17,8 +17,13 @@ export class ModelsPage {
   private modelCollection: AngularFirestoreCollection<Model>
   models: Observable<ModelId[]>
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController,
-    afs: AngularFirestore, public actionSheetCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, afs: AngularFirestore, 
+  public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
+    let loading = this.loadingCtrl.create({
+      content: "Cargando..."
+    })
+    loading.present()
+
     this.modelCollection = afs.collection<Model>('models')
     this.models = this.modelCollection.snapshotChanges().map(actions => {
       return actions.map(a => {
@@ -27,6 +32,8 @@ export class ModelsPage {
         return { id, ...data }
       })
     })
+
+    loading.dismiss()
   }
 
   addModel () {

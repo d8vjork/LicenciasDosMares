@@ -7,6 +7,12 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="addModel()">
+      <ion-icon name="checkmark"></ion-icon>
+    </button>
+  </ion-fab>
+
   <ion-list>
     <ion-item>
       <ion-label stacked>Nº Equipo</ion-label>
@@ -14,22 +20,19 @@
     </ion-item>
     <ion-item>
       <ion-label>Modelo</ion-label>
-      <ion-select *ngFor="let model of models | async" [(ngModel)]="modelsMod">
-        <ion-option value="{{ model.id }}">
+      <ion-select [(ngModel)]="modelsMod">
+        <ion-option *ngFor="let model of models | async" value="{{ model.id }}">
           {{ model.description }}
         </ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label stacked>Licencia</ion-label>
-      <ion-input type="text" value=""></ion-input>
+      <ion-label>Licencia</ion-label>
+      <ion-select [(ngModel)]="licensesMod">
+        <ion-option *ngFor="let license of licenses | async" value="{{ license.id }}">
+          {{ license.product }}: {{ license.serial }}
+        </ion-option>
+      </ion-select>
     </ion-item>
   </ion-list>
-
-  <button [hidden]="desktop.name == ''" ion-button block>
-    Guardar
-  </button>
-  <button [hidden]="desktop.name != ''" ion-button block>
-    Crear
-  </button>
 </ion-content>

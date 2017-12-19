@@ -6,17 +6,17 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/combineLatest';
-import { Loading } from 'ionic-angular/components/loading/loading';
+import { LoginBoxComponent } from '../../components/login-box/login-box';
 
 export interface License { available: boolean; serial: string; product: Object }
 export interface LicenseId extends License { id: string; }
 
 @Component({
   selector: 'page-licenses',
-  templateUrl: 'licenses.html'
+  templateUrl: 'licenses.html',
+  entryComponents: [LoginBoxComponent]
 })
 export class LicensesPage {
-  loading: Loading
   availableModel: string = 'available'
   showSearch: boolean = false
   availableFilter$: BehaviorSubject<boolean|null>
@@ -25,16 +25,18 @@ export class LicensesPage {
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public afs: AngularFirestore,
     public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController) {
-    this.loading = loadingCtrl.create({
+    this.availableFilter$ = new BehaviorSubject(true)
+
+    const loading = this.loadingCtrl.create({
       content: "Cargando..."
     })
-    this.availableFilter$ = new BehaviorSubject(true)
-    this.licenseCollection = afs.collection<License>('licenses')
-
+    loading.present()
+    
+    this.licenseCollection = this.afs.collection<License>('licenses')
     this.licenses = Observable.combineLatest(
       this.availableFilter$
     ).switchMap(([available]) =>
-      afs.collection<License>('licenses', ref =>
+      this.afs.collection<License>('licenses', ref =>
         ref.where('available', '==', available)
       ).snapshotChanges().map(actions => {
         return actions.map(a => {
@@ -45,26 +47,22 @@ export class LicensesPage {
       })
     )
 
-    this.loading.dismiss()
+    loading.dismiss()
   }
 
-  segmentChanged (event) {
-    this.loading.present()
-
+  segmentChanged(event) {
     if (event.value === 'available') {
       this.filterByAvailable(true)
     } else if (event.value === 'unavailable') {
       this.filterByAvailable(false)
     }
-
-    this.loading.dismiss()
   }
 
-  filterByAvailable (available: boolean|null) {
+  filterByAvailable(available: boolean|null) {
     this.availableFilter$.next(available)
   }
 
-  showOptions (license) {
+  showOptions(license) {
     let actionSheet = this.actionSheetCtrl.create({
       title: 'Opciones',
       buttons: [
@@ -87,7 +85,11 @@ export class LicensesPage {
     actionSheet.present()
   }
 
-  addLicense () {
+  showLogin() {
+   // TODO
+  }
+
+  addLicense() {
     let prompt = this.alertCtrl.create({
       title: 'Añadir licencia',
       message: "Introduzca la licencia a añadir",
@@ -110,7 +112,7 @@ export class LicensesPage {
           text: 'Añadir',
           handler: (data) => {
             this.licenseCollection.add({
-              available: true,
+              available: (this.availableModel === 'available') ? true : false,
               serial: data.serial,
               product: data.sistema
             })
@@ -122,7 +124,7 @@ export class LicensesPage {
     prompt.present()
   }
 
-  updateLicense (license) {
+  updateLicense(license) {
     let prompt = this.alertCtrl.create({
       title: 'Actualizar licencia',
       message: "Actualizar datos de la licencia",

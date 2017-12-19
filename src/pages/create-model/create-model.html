@@ -13,6 +13,12 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-fab bottom right>
+    <button ion-fab mini (click)="addModel()">
+      <ion-icon name="checkmark"></ion-icon>
+    </button>
+  </ion-fab>
+
   <ion-row justify-content-center>
     <ion-avatar col-6>
       <img src="assets/imgs/computer.svg">
@@ -39,11 +45,4 @@
       <ion-input type="text" value="{{ (model | async)?.hdd || '' }}"></ion-input>
     </ion-item>
   </ion-list>
-
-  <button [hidden]="modelId == null" ion-button block (click)="doUpdate()">
-    Guardar
-  </button>
-  <button [hidden]="modelId != null" ion-button block (click)="doCreate()">
-    Crear
-  </button>
 </ion-content>
